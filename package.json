@@ -1,0 +1,24 @@
+{
+  "name": "helios-loader",
+  "version": "0.1.0",
+  "description": "Webpack loader for helios scripts",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "NODE_ENV=production webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hyperion-BT/helios-loader.git"
+  },
+  "author": "Christian Schmitz",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/Hyperion-BT/helios-loader/issues"
+  },
+  "homepage": "https://github.com/Hyperion-BT/helios-loader#readme",
+  "devDependencies": {
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  }
+}
