@@ -1,0 +1,10 @@
+spending always_true
+
+import {
+	Datum, 
+	Redeemer
+} from "./common.hl"
+
+func main(_, _, _) -> Bool {
+	true
+}

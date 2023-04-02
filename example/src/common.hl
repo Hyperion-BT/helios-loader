@@ -1,0 +1,10 @@
+module common
+
+struct Datum {
+    a: Int
+}
+
+enum Redeemer {
+    Buy
+    Sell
+}

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "strict": true,
+    "sourceMap": true,
+    "target": "esnext",
+    "typeRoots": ["./node_modules/@types", "./types"]
+  },
+  "exclude": [
+    "node_modules", "dist"
+  ]
+}
