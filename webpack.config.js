@@ -1,7 +1,6 @@
 module.exports = {
 	mode: "development",
 	entry: "./src/index.ts",
-	externals: "@hyperionbt/helios",
 	target: "node",
 	output: {
 		path: __dirname + "/dist/",

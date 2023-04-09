@@ -6,11 +6,9 @@ Features:
 * Helios compilation is run during build time
 * Working with Helios sources directly allows using Helios IDE plugins
 * The Helios library is a peer dependency of this loader, so this loader automatically uses your current version of Helios
-* WiP: generate Typescript declarations for user-defined Helios types
+* WiP: generates Typescript declarations for user-defined Helios types (Typescript declaration files are emitted inside the source directory)
 
 Note: the Helios import syntax must use relative paths as literal strings insteads of module names.
-
-Note: Typescript declaration files are emitted inside the source directory
 
 ## Example
 
@@ -19,12 +17,12 @@ A Helios module:
 // common.hl
 module common
 
-struct Redeemer {
-    a: Int
+struct Datum {
+    secret: Int
 }
 
-struct Datum {
-    a: Int
+struct Redeemer {
+    guess: Int
 }
 ```
 
@@ -33,10 +31,10 @@ A Helios validator:
 // contract.hl
 spending contract 
 
-import { Datum, Redeemer } from "./my_module.hl"
+import { Datum, Redeemer } from "./common.hl"
 
-func main(d: Datum, r: Redeemer, _) -> Bool {
-    d.a == r.a
+func main(datum: Datum, redeemer: Redeemer, _) -> Bool {
+    datum.secret == redeemer.guess
 }
 ```
 
@@ -54,17 +52,26 @@ const uplcProgram = program.compile(true)
 
 ## Installation and configuration
 
-Installation:
-
+Install the loader:
 ```
 npm install --save-dev @hyperionbt/helios-loader
 ```
 
-Webpack configuration:
+If *npm* gives the `unable to resolve dependency tree` error, you can try running the following command to force *npm* to use your currently installed Helios 
+version:
+```
+npm install --save-dev @hyperionbt/helios-loader --legacy-peer-deps
+```
 
+Configure Webpack:
 ```js
+// webpack.config.js
 module.exports = {
-	...
+	mode: "development",
+	entry: "./index.ts",
+	output: {
+		path: __dirname + "/dist/"
+	},
 	module: {
 		rules: [
 		  	{
@@ -75,7 +82,7 @@ module.exports = {
 				},
 				use: [
 					"ts-loader",
-					"@hyperionbt/helios-loader" // helios-loader AFTER ts-loader so it is able to modify .ts sources BEFORE ts-loader
+					"@hyperionbt/helios-loader" // helios-loader AFTER ts-loader so it is able to modify .ts sources importing Helios scripts BEFORE ts-loader is called
 				]
 		  	},
 			{
@@ -83,9 +90,9 @@ module.exports = {
 				exclude: /node_modules/,
 				use: [
 					{
-						loader: path.resolve("./loader.js"),
+						loader: "@hyperionbt/helios-loader",
 						options: {
-							emitTypes: true // must be true when imporing in typescript
+							emitTypes: true // must be true when importing Helios scripts in Typescript
 						}
 					}
 				]

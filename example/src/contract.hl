@@ -5,6 +5,6 @@ import {
 	Redeemer
 } from "./common.hl"
 
-func main(d: Datum, r: Redeemer, _) -> Bool {
-	d.a == r.a
+func main(datum: Datum, redeemer: Redeemer, _) -> Bool {
+	datum.secret == redeemer.guess
 }

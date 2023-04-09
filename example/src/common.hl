@@ -1,9 +1,9 @@
 module common
 
 struct Datum {
-    a: Int
+    secret: Int
 }
 
 struct Redeemer {
-	a: Int
+	guess: Int
 }

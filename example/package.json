@@ -1,13 +1,14 @@
 {
-  "name": "helios-loader test",
+  "name": "helios-loader-example",
   "version": "0.1.0",
   "description": "Sample for testing Webpack helios loader",
   "main": "dist/main.js",
   "scripts": {
     "build": "webpack",
-	"watch": "webpack -w"
+    "watch": "webpack -w"
   },
   "devDependencies": {
+    "@hyperionbt/helios-loader": "^0.1.1",
     "ts-loader": "^9.4.2",
     "typescript": "^4.9.4",
     "webpack": "^5.75.0",
