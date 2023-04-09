@@ -17,10 +17,13 @@
   },
   "homepage": "https://github.com/Hyperion-BT/helios-loader#readme",
   "peerDependencies": {
-    "@hyperionbt/helios": "^0.11.1"
+    "@hyperionbt/helios": "^0.11.0"
   },
   "devDependencies": {
-    "webpack": "^5.77.0",
+    "@types/webpack": "^5.28.1",
+    "ts-loader": "^9.4.2",
+    "typescript": "^4.9.4",
+    "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1"
   }
 }

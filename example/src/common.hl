@@ -4,7 +4,6 @@ struct Datum {
     a: Int
 }
 
-enum Redeemer {
-    Buy
-    Sell
+struct Redeemer {
+	a: Int
 }

@@ -5,6 +5,6 @@ import {
 	Redeemer
 } from "./common.hl"
 
-func main(_, _, _) -> Bool {
-	true
+func main(d: Datum, r: Redeemer, _) -> Bool {
+	d.a == r.a
 }

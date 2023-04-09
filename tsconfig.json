@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
+	"allowJs": true,
     "noImplicitAny": false,
+    "noImplicitThis": false,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -13,10 +15,6 @@
     "target": "esnext",
     "typeRoots": ["./node_modules/@types"]
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules", "dist"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

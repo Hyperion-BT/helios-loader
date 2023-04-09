@@ -1,82 +1,96 @@
-# helios-loader
+# Helios Webpack loader
 
-Helios webpack loader
+This [Webpack](https://webpack.js.org/) loader allows importing Helios scripts directly into Javascript/Typescript projects.
 
-## Usage
+Features:
+* Helios compilation is run during build time
+* Working with Helios sources directly allows using Helios IDE plugins
+* The Helios library is a peer dependency of this loader, so this loader automatically uses your current version of Helios
+* WiP: generate Typescript declarations for user-defined Helios types
+
+Note: the Helios import syntax must use relative paths as literal strings insteads of module names.
+
+Note: Typescript declaration files are emitted inside the source directory
+
+## Example
+
+A Helios module:
+```
+// common.hl
+module common
+
+struct Redeemer {
+    a: Int
+}
+
+struct Datum {
+    a: Int
+}
+```
+
+A Helios validator:
+```
+// contract.hl
+spending contract 
+
+import { Datum, Redeemer } from "./my_module.hl"
+
+func main(d: Datum, r: Redeemer, _) -> Bool {
+    d.a == r.a
+}
+```
+
+Typescript off-chain code:
+```ts
+// index.ts
+import Program from "./contract.hl"
+
+const program = new Program()
+
+const uplcProgram = program.compile(true)
+
+...
+```
+
+## Installation and configuration
+
+Installation:
 
 ```
 npm install --save-dev @hyperionbt/helios-loader
 ```
 
+Webpack configuration:
 
-
-## Properties
-
-* Rewrite file-path-like imports (modules still need to be named regardless)
-* Do a full compilation run of each imported main program (so not for modules)
-
-## Transpilation details
-
-### Transpiling modules
-
-```
-import {} from "path-to-dep-module"
-
-...
-```
-
-becomes
-
-```
-import transpiled-dep-module from "path-to-transpiled-dep-module"
-
-const module = {
-    name: <name>,
-    src: 'import {} from <dep-module-name>\n...',
-    dependencies: {
-        <dep-module-name>: transpiled-dep-module
-    }
-}
-
-export { module as default }
-```
-
-### Transpiling main scripts
-
-```
-import {} from "path-to-dep-module"
-
-...
-```
-
-becomes
-
-```
-import * as helios from "@hyperionbt/helios"
-import transpiled-dep-module from "path-to-transpiled-dep-module"
-
-export default class Program {
-    #program;
-
-    constructor(parameters) {
-        const dependencies = <code-that-reduces-dependecies>
-
-        this.#program = helios.Program.new(<this-transpiled-src>, dependencies)
-    }
-
-    <wrapper functions for program>
+```js
+module.exports = {
+	...
+	module: {
+		rules: [
+		  	{
+				test: /(?<!\.d)\.(ts|tsx)$/,
+				exclude: /node_modules/,
+				resolve: {
+			  		extensions: [".ts", ".tsx"],
+				},
+				use: [
+					"ts-loader",
+					"@hyperionbt/helios-loader" // helios-loader AFTER ts-loader so it is able to modify .ts sources BEFORE ts-loader
+				]
+		  	},
+			{
+				test: /\.(hl|helios)$/,
+				exclude: /node_modules/,
+				use: [
+					{
+						loader: path.resolve("./loader.js"),
+						options: {
+							emitTypes: true // must be true when imporing in typescript
+						}
+					}
+				]
+			}
+		]
+	}
 }
 ```
-
-### Convenience features
-
-* Full helios programs can be compiled during webpack build time, instead of during runtime.
-* The loader can throw an error if a helios module is being imported into a js/ts file -> too difficult, but could be a runtime error instead, stretch goal
-* Throw an error if a module/script doesn't have a unique name.
-* Import using relative paths instead module names.
-* Allow import helios modules and validators using npm. This would require non-relative paths.
-
-
-### Typing
-
-Can be added later through another plugin.

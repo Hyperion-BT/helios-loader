@@ -8,15 +8,6 @@ module.exports = {
 	},
 	module: {
 		rules: [
-			{
-				test: /\.hl$/,
-				exclude: /node_modules/,
-				use: [
-					{
-						loader: path.resolve("../dist/index.js")
-					}
-				]
-			},
 		  	{
 				test: /(?<!\.d)\.(ts|tsx)$/,
 				exclude: /node_modules/,
@@ -24,9 +15,22 @@ module.exports = {
 			  		extensions: [".ts", ".tsx"],
 				},
 				use: [
-					"ts-loader"
+					"ts-loader",
+					"@hyperionbt/helios-loader"
 				]
-		  	}
+		  	},
+			{
+				test: /\.(hl|helios)$/,
+				exclude: /node_modules/,
+				use: [
+					{
+						loader: "@hyperionbt/helios-loader",
+						options: {
+							emitTypes: true
+						}
+					}
+				]
+			}
 		]
 	}
 }
