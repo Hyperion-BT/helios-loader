@@ -86,8 +86,17 @@ export class HeliosLoader extends AsyncLoader {
 `import * as helios from "@hyperionbt/helios"
 
 declare class Program {
-constructor()
-compile(optimize?: boolean): helios.UplcProgram
+    constructor(parameters?: {[name: string]: helios.HeliosData | any});
+
+    get name(): string;
+    get paramTypes(): {[name: string]: helios.Type};
+    get parameters(): {[name: string]: helios.HeliosData};
+    get types(): {[typeName: string]: {new(...any): helios.HeliosData}};
+
+    set parameters(params: {[name: string]: helios.HeliosData | any});
+
+    compile(optimize?: boolean): helios.UplcProgram;
+    evalParam(paramName: string): helios.UplcValue;
 }
 
 export default Program
@@ -97,10 +106,11 @@ export default Program
 
     emitWrappedScript(dependencies: Dependencies, src: string) {
         return (
-`export default class Program {
+`//wraps helios.Program
+export default class Program {
     #program
 
-    constructor() {
+    constructor(parameters = {}) {
         // load all the dependencies
         const allDeps = [${Object.keys(dependencies).join(", ")}]
 
@@ -119,13 +129,38 @@ export default Program
         }
 
         this.#program = helios.Program.new(\`${src}\`, Array.from(depSrcs.values()))
+
+        if (Object.keys(parameters).length > 0) {
+            this.#program.parameters = parameters
+        }
     }
 
-    /**
-     * @param {boolean} optimize
-     */
+    get name() {
+        return this.#program.name
+    }
+
+    get paramTypes() {
+        return this.#program.paramTypes
+    }
+
+    get parameters() {
+        return this.#program.parameters
+    }
+
+    get types() {
+        return this.#program.types
+    }
+
+    set parameters(params) {
+        this.#program.parameters = params
+    }
+
     compile(optimize = false) {
         return this.#program.compile(optimize)
+    }
+
+    evalParam(paramName) {
+        return this.#program.evalParam(paramName)
     }
 }
 `
@@ -146,7 +181,13 @@ export default Program
         }
 
         async function addDepSrcs(dir: string, dep: Module): Promise<void> {
-            depSrcs.set(dep.name, dep.src)
+            if (depSrcs.has(dep.name)) {
+                if (depSrcs.get(dep.name) != dep.src) {
+                    throw new Error(`duplicate module name "${dep.name}"`)
+                }
+            } else {
+                depSrcs.set(dep.name, dep.src)
+            }
 
             for (let d of Object.keys(dep.dependencies)) {
                 const p = joinPath(dir, dep.dependencies[d])

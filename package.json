@@ -1,6 +1,6 @@
 {
   "name": "@hyperionbt/helios-loader",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Webpack loader for helios scripts",
   "main": "./dist/index.js",
   "scripts": {
@@ -17,9 +17,6 @@
     "url": "https://github.com/Hyperion-BT/helios-loader/issues"
   },
   "homepage": "https://github.com/Hyperion-BT/helios-loader#readme",
-  "peerDependencies": {
-    "@hyperionbt/helios": "^0.11.0"
-  },
   "devDependencies": {
     "@types/webpack": "^5.28.1",
     "ts-loader": "^9.4.2",
