@@ -5,7 +5,7 @@ This [Webpack](https://webpack.js.org/) loader allows importing Helios scripts d
 Features:
 * Helios compilation is run during build time
 * Working with Helios sources directly allows using Helios IDE plugins
-* The Helios library is a peer dependency of this loader, so this loader automatically uses your current version of Helios
+* Automatically uses your current version of Helios (must be installed manually inside the repo where you configure webpack)
 * WiP: generates Typescript declarations for user-defined Helios types (Typescript declaration files are emitted inside the source directory)
 
 Note: the Helios import syntax must use relative paths as literal strings insteads of module names.
@@ -49,6 +49,8 @@ const uplcProgram = program.compile(true)
 
 ...
 ```
+
+The imported `Program` has the same methods as [`helios.Program`](https://www.hyperion-bt.org/helios-book/api/reference/program.html).
 
 ## Installation and configuration
 
