@@ -1,7 +1,7 @@
 import { stripQuotes } from "./util"
 
 const NAME_RE = /name:\s["]([a-zA-Z_]+)["]/
-const DEP_RE = /dependencies:\s(\{.*\})/
+const DEP_RE = /dependencyInfo:\s(\{.*\})/
 const SRC_RE = /\`[\s\S]*\`/gm
 
 export type Dependencies = {[name: string]: string}
@@ -33,7 +33,8 @@ export class Module {
         return (
 `const m = {
     name: "${this.#name}",
-    dependencies: {${Object.keys(this.#dependencies).map(d => `"${d}": "${this.#dependencies[d]}"`).join(", ")}},
+    dependencyInfo: {${Object.keys(this.#dependencies).map(d => `"${d}": "${this.#dependencies[d]}"`).join(", ")}},
+    dependencies: [${Object.keys(this.#dependencies).join(", ")}],
     src: \`${this.#src}\`
 }
 
@@ -58,6 +59,7 @@ export { m as default }
         if (match) {
             return JSON.parse(match[1])
         } else {
+            console.log("HERE", m);
             throw new Error("dependencies not matched")
         }
     }

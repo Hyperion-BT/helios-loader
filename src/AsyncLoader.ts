@@ -21,7 +21,6 @@ export class AsyncLoader {
     }
 
     get queryParams(): string {
-        console.log(this.#ctx.request)
         return this.#ctx.resourceQuery
     }
 

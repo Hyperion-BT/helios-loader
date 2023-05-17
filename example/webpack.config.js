@@ -1,7 +1,9 @@
 const path = require("path");
 
+const prod = false
+
 module.exports = {
-	mode: "development",
+	mode: prod ? "production" : "development",
 	entry: "./src/index.ts",
 	output: {
 		path: __dirname + "/dist/"

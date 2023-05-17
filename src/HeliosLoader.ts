@@ -13,7 +13,7 @@ import { stripQuotes } from "./util"
 
 export type HeliosLibrary = any
 
-const IMPORT_RE = /import\s*\{[\s\S]*\}[\s]*from[\s]*(\"[^\"]*\")/gm
+const IMPORT_RE = /import\s*?\{[\s\S]*?\}[\s]*?from[\s]*?(\"[^\"]*?\")/m
 
 export class HeliosLoader extends AsyncLoader {
     #helios: HeliosLibrary
@@ -33,14 +33,16 @@ export class HeliosLoader extends AsyncLoader {
 
 		const [purpose, name] = purposeAndName
 
-		const importStatements = Array.from(src.matchAll(IMPORT_RE))
+		//const importStatements = Array.from(src.matchAll(IMPORT_RE))
 
 		const result: string[] = []
 		const deps: Dependencies = {}
 
-		for (let statement of importStatements) {
+		let statement = src.match(IMPORT_RE);
+		while (statement) {
 			let hlPath = statement[1]
 			let hlPathInner = stripQuotes(hlPath)
+
 
 			let absPath = await this.resolve(hlPathInner)
 			let content = await this.readFile(absPath)
@@ -58,8 +60,11 @@ export class HeliosLoader extends AsyncLoader {
 			// change the path by the name of the module
 			src = src.slice(0, statement.index) + statement[0].slice(0, statement[0].length - statement[1].length) + depName + src.slice(statement.index + statement[0].length)
 
+
 			result.push(`import ${depName} from ${hlPath}`)
 			deps[depName] = hlPathInner
+
+			statement = src.match(IMPORT_RE);
 		}
 
 		if (purpose == "module") {
@@ -75,7 +80,7 @@ export class HeliosLoader extends AsyncLoader {
 
 		const r = result.join("\n")
 
-		return r
+        return r
 	}
 
     emitScriptTypes() {
@@ -119,7 +124,7 @@ export default class Program {
         function addDepSrcs(dep) {
             depSrcs.set(dep.name, dep.src)
 
-            for (let d of Object.keys(dep.dependencies)) {
+            for (let d of dep.dependencies) {
                 addDepSrcs(d)
             }
         }
@@ -200,12 +205,24 @@ export default class Program {
         const dir = this.currentDir
 
         for (let d of Object.keys(dependencies)) {
-            await addDepSrcs(dir, await readModule(joinPath(dir, dependencies[d])))
+			const modulePath = joinPath(dir, dependencies[d]);
+            await addDepSrcs(dirname(modulePath), await readModule(modulePath))
         }
 
-        console.log(`Compiling ${this.currentFile} with Helios ${this.#helios.VERSION}`)
+		// for better debugging
+		const filePaths = [this.currentFile].concat(Array.from(depSrcs.keys()))
 
-        this.#helios.Program.new(src, Array.from(depSrcs.values()))
+		try {
+			this.#helios.Program.new(src, Array.from(depSrcs.values()))
+		} catch(e: any) {
+			if (e instanceof this.#helios.UserError && e.src.fileIndex !== null) {
+				throw new Error(`Error in ${filePaths[e.src.fileIndex]}:\n${e.message}`);
+			} else {
+				console.error(e);
+
+				throw e;
+			}
+		}
     }
 
 	async loadScript(dependencies: Dependencies, src: string): Promise<string> {
