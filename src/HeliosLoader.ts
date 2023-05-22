@@ -95,8 +95,8 @@ declare class Program {
 
     get name(): string;
     get paramTypes(): {[name: string]: helios.Type};
-    get parameters(): {[name: string]: helios.HeliosData};
-    get types(): {[typeName: string]: {new(...any): helios.HeliosData}};
+    get parameters(): {[name: string]: helios.HeliosData | any};
+    get types(): {[typeName: string]: any};
 
     set parameters(params: {[name: string]: helios.HeliosData | any});
 

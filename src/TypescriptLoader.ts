@@ -13,9 +13,9 @@ export class TypescriptLoader extends AsyncLoader {
 
     async load(src: string): Promise<string> {
         // first remove comments from src
-        src = src.replace(/\/\*[\s\S]*\*\//gm, "").replace(/\/\/[\s\S]*$/g, "")
+        const srcForMatchingImports = src.replace(/\/\*[\s\S]*\*\//gm, "").replace(/\/\/[\s\S]*$/g, "")
         
-        const matches = Array.from(src.matchAll(IMPORT_RE))
+        const matches = Array.from(srcForMatchingImports.matchAll(IMPORT_RE))
 
         for (let m of matches) {
             const hlPath = joinPath(this.currentDir, m[3])

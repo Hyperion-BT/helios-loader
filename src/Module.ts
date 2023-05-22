@@ -59,7 +59,6 @@ export { m as default }
         if (match) {
             return JSON.parse(match[1])
         } else {
-            console.log("HERE", m);
             throw new Error("dependencies not matched")
         }
     }
